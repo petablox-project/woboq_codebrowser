@@ -23,22 +23,21 @@
 
 #include <sstream>
 
-std::vector<ProjectInfo> ProjectManager::systemProjects()
-{
-    std::vector<ProjectInfo> projects;
+std::vector<ProjectInfo> ProjectManager::systemProjects() {
+  std::vector<ProjectInfo> projects;
 
-    std::istringstream stream("@SYSTEM_INCLUDE_DIRS@");
-    std::string current;
-    std::string name;
+  std::istringstream stream("@SYSTEM_INCLUDE_DIRS@");
+  std::string current;
+  std::string name;
 
-    while (std::getline(stream, current, ';')) {
-        if(name.empty()) {
-            name = current;
-        } else {
-            projects.emplace_back(name, current, ProjectInfo::Internal);
-            name.clear();
-        }
+  while (std::getline(stream, current, ';')) {
+    if (name.empty()) {
+      name = current;
+    } else {
+      projects.emplace_back(name, current, ProjectInfo::Internal);
+      name.clear();
     }
+  }
 
-    return projects;
+  return projects;
 }

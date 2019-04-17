@@ -1,6 +1,6 @@
 /****************************************************************************
- * Copyright (C) 2012-2016 Woboq GmbH
- * Olivier Goffart <contact at woboq.com>
+ * Copyright (C) 2018 Woboq GmbH
+ * Dominik Schmidt <dev at dominik-schmidt.de>
  * https://woboq.com/codebrowser.html
  *
  * This file is part of the Woboq Code Browser.
@@ -19,29 +19,25 @@
  * purchasing a commercial licence.
  ****************************************************************************/
 
-#pragma once
+#include "projectmanager.h"
 
-namespace clang {
-class CallExpr;
-class NamedDecl;
-class Expr;
-class CXXConstructExpr;
-} // namespace clang
-class Annotator;
+#include <sstream>
 
-/**
- * Handle the SIGNAL and SLOT macro within calls to QObject::connect or the like
- *
- * Recognize calls to QObject::connect,  QObject::disconnect, QTimer::singleShot
- */
-struct QtSupport {
-  Annotator &annotator;
-  clang::NamedDecl *currentContext;
+std::vector<ProjectInfo> ProjectManager::systemProjects() {
+  std::vector<ProjectInfo> projects;
 
-  void visitCallExpr(clang::CallExpr *e);
-  void visitCXXConstructExpr(clang::CXXConstructExpr *e);
+  std::istringstream stream("include;/usr/include/");
+  std::string current;
+  std::string name;
 
-private:
-  void handleSignalOrSlot(clang::Expr *obj, clang::Expr *method);
-  void handleInvokeMethod(clang::Expr *obj, clang::Expr *method);
-};
+  while (std::getline(stream, current, ';')) {
+    if (name.empty()) {
+      name = current;
+    } else {
+      projects.emplace_back(name, current, ProjectInfo::Internal);
+      name.clear();
+    }
+  }
+
+  return projects;
+}
