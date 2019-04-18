@@ -300,13 +300,13 @@ void Generator::generate(llvm::StringRef outputPrefix, std::string dataPath,
     bufferStart = c;
   };
 
-  std::string style = "";
-
+  /*
   if (std::find(coveredLines.begin(), coveredLines.end(), 1) !=
       coveredLines.end())
     style = "style=\"background-color:gold;\"";
-  myfile << "<tr " << style << " >" << 1
-         << "</th><td>";
+    */
+
+   myfile << "<tr> <th id=\"1\">1</th><td>";
 
   std::deque<const Tag *> stack;
 
@@ -347,18 +347,19 @@ void Generator::generate(llvm::StringRef outputPrefix, std::string dataPath,
       flush();
       ++bufferStart; // skip the new line
       ++line;
+
       for (auto it = stack.crbegin(); it != stack.crend(); ++it)
         (*it)->close(myfile);
+
       std::string style = "";
 
       if (std::find(coveredLines.begin(), coveredLines.end(), line) !=
           coveredLines.end())
       	style = "style=\"background-color:gold;\"";
 
-      myfile << "</td></tr>\n"
-                "<tr "
-             << style << " ><th " << line << "\">" << line
+      myfile << "</td></tr>\n <tr " << style << "> <th id=\"" << line << "\">" << line
              << "</th><td>";
+
       for (auto it = stack.cbegin(); it != stack.cend(); ++it)
         (*it)->open(myfile);
       break;
